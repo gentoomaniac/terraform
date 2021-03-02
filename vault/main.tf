@@ -2,6 +2,20 @@ provider "vault" {
   address = "https://vault.srv.gentoomaniac.net"
 }
 
+resource "vault_github_auth_backend" "github_auth" {
+  organization = "gentoomaniac-net"
+}
+
+resource "vault_github_user" "gentoomaniac" {
+  user     = "gentoomaniac"
+  policies = ["admin"]
+}
+
+resource "vault_approle_auth_backend_role" "approle_sto_dockerhost_a1" {
+  role_name      = "sto-dockerhost-a1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net", "puppet_role_certbot_chain", "puppet_role_certbot_key"]
+}
+
 data "vault_policy_document" "puppet_common" {
   rule {
     path         = "puppet/data/common/*"
@@ -10,6 +24,18 @@ data "vault_policy_document" "puppet_common" {
   }
 }
 
+data "vault_policy_document" "puppet_role_certbot_chain" {
+  rule {
+    path         = "puppet/data/common/secret_srv_gentoomaniac_net_cert/*"
+    capabilities = ["update"]
+  }
+}
+data "vault_policy_document" "puppet_role_certbot_key" {
+  rule {
+    path         = "puppet/data/common/secret_srv_gentoomaniac_net_key/*"
+    capabilities = ["update"]
+  }
+}
 data "vault_policy_document" "puppet_role_coredns" {
   rule {
     path         = "puppet/data/role/coredns/*"
@@ -91,55 +117,55 @@ data "vault_policy_document" "puppet_fqdn_sto_vault_a1" {
 }
 
 resource "vault_policy" "puppet_role_coredns" {
-  name     = "puppet-role-coredns"
-  policy   = data.vault_policy_document.puppet_role_coredns.hcl
+  name   = "puppet-role-coredns"
+  policy = data.vault_policy_document.puppet_role_coredns.hcl
 }
 resource "vault_policy" "puppet_role_dockerhost" {
-  name     = "puppet-role-dockerhost"
-  policy   = data.vault_policy_document.puppet_role_dockerhost.hcl
+  name   = "puppet-role-dockerhost"
+  policy = data.vault_policy_document.puppet_role_dockerhost.hcl
 }
 resource "vault_policy" "puppet_role_influxdb" {
-  name     = "puppet-role-influxdb"
-  policy   = data.vault_policy_document.puppet_role_influxdb.hcl
+  name   = "puppet-role-influxdb"
+  policy = data.vault_policy_document.puppet_role_influxdb.hcl
 }
 resource "vault_policy" "puppet_role_infra" {
-  name     = "puppet-role-infra"
-  policy   = data.vault_policy_document.puppet_role_infra.hcl
+  name   = "puppet-role-infra"
+  policy = data.vault_policy_document.puppet_role_infra.hcl
 }
 resource "vault_policy" "puppet_role_nzbget" {
-  name     = "puppet-role-nzbget"
-  policy   = data.vault_policy_document.puppet_role_nzbget.hcl
+  name   = "puppet-role-nzbget"
+  policy = data.vault_policy_document.puppet_role_nzbget.hcl
 }
 resource "vault_policy" "puppet_role_vault" {
-  name     = "puppet-role-vault"
-  policy   = data.vault_policy_document.puppet_role_vault.hcl
+  name   = "puppet-role-vault"
+  policy = data.vault_policy_document.puppet_role_vault.hcl
 }
 
 resource "vault_policy" "puppet_fqdn_sto_coredns_a1" {
-  name     = "sto-coredns-a1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_coredns_a1.hcl
+  name   = "sto-coredns-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_coredns_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_coredns_c1" {
-  name     = "sto-coredns-c1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_coredns_c1.hcl
+  name   = "sto-coredns-c1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_coredns_c1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_dockerhost_a1" {
-  name     = "sto-dockerhost-a1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_dockerhost_a1.hcl
+  name   = "sto-dockerhost-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_dockerhost_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_influxdb_a1" {
-  name     = "sto-influxdb-a1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_influxdb_a1.hcl
+  name   = "sto-influxdb-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_influxdb_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_infra_a1" {
-  name     = "sto-infra-a1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_infra_a1.hcl
+  name   = "sto-infra-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_infra_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_nzbget_a1" {
-  name     = "sto-nzbget-a1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_nzbget_a1.hcl
+  name   = "sto-nzbget-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_nzbget_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_vault_a1" {
-  name     = "sto-vault-a1.sto.gentoomaniac.net"
-  policy   = data.vault_policy_document.puppet_fqdn_sto_vault_a1.hcl
+  name   = "sto-vault-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_vault_a1.hcl
 }
