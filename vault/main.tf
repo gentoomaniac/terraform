@@ -13,7 +13,7 @@ resource "vault_github_user" "gentoomaniac" {
 
 resource "vault_approle_auth_backend_role" "approle_sto_dockerhost_a1" {
   role_name      = "sto-dockerhost-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net", "puppet-role-certbot-chain", "puppet-role-certbot-key"]
+  token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
 }
 
 data "vault_policy_document" "puppet_common" {
@@ -24,18 +24,6 @@ data "vault_policy_document" "puppet_common" {
   }
 }
 
-data "vault_policy_document" "puppet_role_certbot_chain" {
-  rule {
-    path         = "puppet/data/common/secret_srv_gentoomaniac_net_cert/*"
-    capabilities = ["update"]
-  }
-}
-data "vault_policy_document" "puppet_role_certbot_key" {
-  rule {
-    path         = "puppet/data/common/secret_srv_gentoomaniac_net_key/*"
-    capabilities = ["update"]
-  }
-}
 data "vault_policy_document" "puppet_role_coredns" {
   rule {
     path         = "puppet/data/role/coredns/*"
@@ -116,13 +104,17 @@ data "vault_policy_document" "puppet_fqdn_sto_vault_a1" {
   }
 }
 
-resource "vault_policy" "puppet_role_certbot_chain" {
-  name   = "puppet-role-certbot-chain"
-  policy = data.vault_policy_document.puppet_role_certbot_chain.hcl
+resource "vault_policy" "puppet_role_certbot" {
+  name   = "puppet-role-certbot"
+  policy = <<EOT
+path "puppet/data/common/secret_srv_gentoomaniac_net_cert" {
+  capabilities = ["read", "update"]
 }
-resource "vault_policy" "puppet_role_certbot_key" {
-  name   = "puppet-role-certbot-key"
-  policy = data.vault_policy_document.puppet_role_certbot_key.hcl
+path "puppet/data/common/secret_srv_gentoomaniac_net_key" {
+  capabilities = ["read", "update"]
+}
+
+EOT
 }
 resource "vault_policy" "puppet_role_coredns" {
   name   = "puppet-role-coredns"
