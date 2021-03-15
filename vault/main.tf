@@ -2,10 +2,6 @@ provider "vault" {
   address = "https://vault.srv.gentoomaniac.net"
 }
 
-resource "vault_github_auth_backend" "github_auth" {
-  organization = "gentoomaniac-net"
-}
-
 resource "vault_github_user" "gentoomaniac" {
   user     = "gentoomaniac"
   policies = ["admin"]
