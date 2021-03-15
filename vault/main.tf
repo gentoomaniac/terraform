@@ -113,6 +113,9 @@ path "puppet/data/common/secret_srv_gentoomaniac_net_cert" {
 path "puppet/data/common/secret_srv_gentoomaniac_net_key" {
   capabilities = ["read", "update"]
 }
+path "puppet/data/role/certbot/*" {
+  capabilities = ["read"]
+}
 
 EOT
 }
