@@ -12,6 +12,13 @@ resource "vault_approle_auth_backend_role" "approle_sto_dockerhost_a1" {
   token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
 }
 
+data "vault_policy_document" "puppet_bootstrap" {
+  rule {
+    path         = "puppet/data/bootstrap/*"
+    capabilities = ["read"]
+    description  = "bootstrap area for new machines to pick up approle credentials"
+  }
+}
 data "vault_policy_document" "puppet_common" {
   rule {
     path         = "puppet/data/common/*"
@@ -114,6 +121,10 @@ path "puppet/data/role/certbot/*" {
 }
 
 EOT
+}
+resource "vault_policy" "puppet_bootstrap" {
+  name   = "puppet-bootstrap"
+  policy = data.vault_policy_document.puppet_bootstrap.hcl
 }
 resource "vault_policy" "puppet_role_coredns" {
   name   = "puppet-role-coredns"
