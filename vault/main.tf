@@ -11,6 +11,10 @@ resource "vault_approle_auth_backend_role" "approle_sto_dockerhost_a1" {
   role_name      = "sto-dockerhost-a1.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
 }
+resource "vault_approle_auth_backend_role" "approle_bootstrap" {
+  role_name      = "bootstrap"
+  token_policies = ["puppet-common"]
+}
 
 data "vault_policy_document" "puppet_bootstrap" {
   rule {
