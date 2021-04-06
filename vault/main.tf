@@ -9,7 +9,11 @@ resource "vault_github_user" "gentoomaniac" {
 
 resource "vault_approle_auth_backend_role" "approle_sto_dockerhost_a1" {
   role_name      = "sto-dockerhost-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
+  token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net"]
+}
+resource "vault_approle_auth_backend_role" "approle_sto_infra_a1" {
+  role_name      = "sto-infra-a1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "puppet-role-infra", "sto-infra-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
 }
 resource "vault_approle_auth_backend_role" "approle_bootstrap" {
   role_name      = "bootstrap"
