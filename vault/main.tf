@@ -15,6 +15,10 @@ resource "vault_approle_auth_backend_role" "approle_sto_infra_a1" {
   role_name      = "sto-infra-a1.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-infra", "sto-infra-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
 }
+resource "vault_approle_auth_backend_role" "approle_sto_minecraft_a1" {
+  role_name      = "sto-minecraft-a1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "puppet-role-minecraft", "sto-minecraft-a1.sto.gentoomaniac.net"]
+}
 resource "vault_approle_auth_backend_role" "approle_bootstrap" {
   role_name      = "bootstrap"
   token_policies = ["puppet-common"]
@@ -59,6 +63,12 @@ data "vault_policy_document" "puppet_role_infra" {
     capabilities = ["read"]
   }
 }
+data "vault_policy_document" "puppet_role_minecraft" {
+  rule {
+    path         = "puppet/data/role/minecraft/*"
+    capabilities = ["read"]
+  }
+}
 data "vault_policy_document" "puppet_role_nzbget" {
   rule {
     path         = "puppet/data/role/nzbget/*"
@@ -99,6 +109,12 @@ data "vault_policy_document" "puppet_fqdn_sto_influxdb_a1" {
 data "vault_policy_document" "puppet_fqdn_sto_infra_a1" {
   rule {
     path         = "puppet/data/fqdn/sto-infra-a1.sto.gentoomaniac.net/*"
+    capabilities = ["read"]
+  }
+}
+data "vault_policy_document" "puppet_fqdn_sto_minecraft_a1" {
+  rule {
+    path         = "puppet/data/fqdn/sto-minecraft-a1.sto.gentoomaniac.net/*"
     capabilities = ["read"]
   }
 }
@@ -150,6 +166,10 @@ resource "vault_policy" "puppet_role_infra" {
   name   = "puppet-role-infra"
   policy = data.vault_policy_document.puppet_role_infra.hcl
 }
+resource "vault_policy" "puppet_role_minecraft" {
+  name   = "puppet-role-minecraft"
+  policy = data.vault_policy_document.puppet_role_minecraft.hcl
+}
 resource "vault_policy" "puppet_role_nzbget" {
   name   = "puppet-role-nzbget"
   policy = data.vault_policy_document.puppet_role_nzbget.hcl
@@ -178,6 +198,10 @@ resource "vault_policy" "puppet_fqdn_sto_influxdb_a1" {
 resource "vault_policy" "puppet_fqdn_sto_infra_a1" {
   name   = "sto-infra-a1.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_infra_a1.hcl
+}
+resource "vault_policy" "puppet_fqdn_sto_minecraft_a1" {
+  name   = "sto-minecraft-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_minecraft_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_nzbget_a1" {
   name   = "sto-nzbget-a1.sto.gentoomaniac.net"
