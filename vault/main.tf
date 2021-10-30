@@ -43,6 +43,10 @@ resource "vault_approle_auth_backend_role" "approle_sto_k8s_a4" {
   role_name      = "sto-k8s-a4.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-k8s", "sto-k8s-a4.sto.gentoomaniac.net"]
 }
+resource "vault_approle_auth_backend_role" "approle_sto_miner_a1" {
+  role_name      = "sto-miner-a1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "puppet-role-miner", "sto-miner-a1.sto.gentoomaniac.net"]
+}
 
 data "vault_policy_document" "puppet_bootstrap" {
   rule {
@@ -104,6 +108,12 @@ data "vault_policy_document" "puppet_role_vault" {
 data "vault_policy_document" "puppet_role_k8s" {
   rule {
     path         = "puppet/data/role/k8s/*"
+    capabilities = ["read"]
+  }
+}
+data "vault_policy_document" "puppet_role_miner" {
+  rule {
+    path         = "puppet/data/role/miner/*"
     capabilities = ["read"]
   }
 }
@@ -180,6 +190,12 @@ data "vault_policy_document" "puppet_fqdn_sto_k8s_a4" {
     capabilities = ["read"]
   }
 }
+data "vault_policy_document" "puppet_fqdn_sto_miner_a1" {
+  rule {
+    path         = "puppet/data/fqdn/sto-miner-a1.sto.gentoomaniac.net/*"
+    capabilities = ["read"]
+  }
+}
 
 resource "vault_policy" "puppet_role_certbot" {
   name   = "puppet-role-certbot"
@@ -232,6 +248,10 @@ resource "vault_policy" "puppet_role_k8s" {
   name   = "puppet-role-k8s"
   policy = data.vault_policy_document.puppet_role_k8s.hcl
 }
+resource "vault_policy" "puppet_role_miner" {
+  name   = "puppet-role-miner"
+  policy = data.vault_policy_document.puppet_role_miner.hcl
+}
 
 resource "vault_policy" "puppet_fqdn_sto_coredns_a1" {
   name   = "sto-coredns-a1.sto.gentoomaniac.net"
@@ -280,4 +300,8 @@ resource "vault_policy" "puppet_fqdn_sto_k8s_a3" {
 resource "vault_policy" "puppet_fqdn_sto_k8s_a4" {
   name   = "sto-k8s-a4.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_k8s_a4.hcl
+}
+resource "vault_policy" "puppet_fqdn_sto_miner_a1" {
+  name   = "sto-miner-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_miner_a1.hcl
 }
