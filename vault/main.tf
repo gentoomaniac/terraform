@@ -27,26 +27,6 @@ resource "vault_approle_auth_backend_role" "approle_bootstrap" {
   role_name      = "bootstrap"
   token_policies = ["puppet-common"]
 }
-resource "vault_approle_auth_backend_role" "approle_timo-demo" {
-  role_name      = "timo-demo"
-  token_policies = ["puppet-common"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_k8s_a1" {
-  role_name      = "sto-k8s-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-k8s", "sto-k8s-a1.sto.gentoomaniac.net"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_k8s_a2" {
-  role_name      = "sto-k8s-a2.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-k8s", "sto-k8s-a2.sto.gentoomaniac.net"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_k8s_a3" {
-  role_name      = "sto-k8s-a3.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-k8s", "sto-k8s-a3.sto.gentoomaniac.net"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_k8s_a4" {
-  role_name      = "sto-k8s-a4.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-k8s", "sto-k8s-a4.sto.gentoomaniac.net"]
-}
 resource "vault_approle_auth_backend_role" "approle_sto_miner_a1" {
   role_name      = "sto-miner-a1.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-miner", "sto-miner-a1.sto.gentoomaniac.net"]
@@ -106,12 +86,6 @@ data "vault_policy_document" "puppet_role_nzbget" {
 data "vault_policy_document" "puppet_role_vault" {
   rule {
     path         = "puppet/data/role/vault/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_k8s" {
-  rule {
-    path         = "puppet/data/role/k8s/*"
     capabilities = ["read"]
   }
 }
@@ -176,30 +150,6 @@ data "vault_policy_document" "puppet_fqdn_sto_vault_a1" {
     capabilities = ["read"]
   }
 }
-data "vault_policy_document" "puppet_fqdn_sto_k8s_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-k8s-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_k8s_a2" {
-  rule {
-    path         = "puppet/data/fqdn/sto-k8s-a2.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_k8s_a3" {
-  rule {
-    path         = "puppet/data/fqdn/sto-k8s-a3.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_k8s_a4" {
-  rule {
-    path         = "puppet/data/fqdn/sto-k8s-a4.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
 data "vault_policy_document" "puppet_fqdn_sto_miner_a1" {
   rule {
     path         = "puppet/data/fqdn/sto-miner-a1.sto.gentoomaniac.net/*"
@@ -254,10 +204,6 @@ resource "vault_policy" "puppet_role_vault" {
   name   = "puppet-role-vault"
   policy = data.vault_policy_document.puppet_role_vault.hcl
 }
-resource "vault_policy" "puppet_role_k8s" {
-  name   = "puppet-role-k8s"
-  policy = data.vault_policy_document.puppet_role_k8s.hcl
-}
 resource "vault_policy" "puppet_role_miner" {
   name   = "puppet-role-miner"
   policy = data.vault_policy_document.puppet_role_miner.hcl
@@ -298,22 +244,6 @@ resource "vault_policy" "puppet_fqdn_sto_nzbget_a1" {
 resource "vault_policy" "puppet_fqdn_sto_vault_a1" {
   name   = "sto-vault-a1.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_vault_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_k8s_a1" {
-  name   = "sto-k8s-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_k8s_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_k8s_a2" {
-  name   = "sto-k8s-a2.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_k8s_a2.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_k8s_a3" {
-  name   = "sto-k8s-a3.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_k8s_a3.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_k8s_a4" {
-  name   = "sto-k8s-a4.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_k8s_a4.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_miner_a1" {
   name   = "sto-miner-a1.sto.gentoomaniac.net"
