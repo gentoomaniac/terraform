@@ -15,6 +15,10 @@ resource "vault_approle_auth_backend_role" "approle_sto_infra_a1" {
   role_name      = "sto-infra-a1.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-infra", "sto-infra-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
 }
+resource "vault_approle_auth_backend_role" "approle_sto_jammya_a1" {
+  role_name      = "sto-jammy-a1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "sto-jammy-a1.sto.gentoomaniac.net"]
+}
 resource "vault_approle_auth_backend_role" "approle_sto_minecraft_a1" {
   role_name      = "sto-minecraft-a1.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-minecraft", "sto-minecraft-a1.sto.gentoomaniac.net"]
@@ -148,6 +152,12 @@ data "vault_policy_document" "puppet_fqdn_sto_infra_a1" {
     capabilities = ["read"]
   }
 }
+data "vault_policy_document" "puppet_fqdn_sto_jammy_a1" {
+  rule {
+    path         = "puppet/data/fqdn/sto-jammy-a1.sto.gentoomaniac.net/*"
+    capabilities = ["read"]
+  }
+}
 data "vault_policy_document" "puppet_fqdn_sto_minecraft_a1" {
   rule {
     path         = "puppet/data/fqdn/sto-minecraft-a1.sto.gentoomaniac.net/*"
@@ -272,6 +282,10 @@ resource "vault_policy" "puppet_fqdn_sto_influxdb_a1" {
 resource "vault_policy" "puppet_fqdn_sto_infra_a1" {
   name   = "sto-infra-a1.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_infra_a1.hcl
+}
+resource "vault_policy" "puppet_fqdn_sto_jammy_a1" {
+  name   = "sto-jammy-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_jammy_a1.hcl
 }
 resource "vault_policy" "puppet_fqdn_sto_minecraft_a1" {
   name   = "sto-minecraft-a1.sto.gentoomaniac.net"
