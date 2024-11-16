@@ -23,15 +23,18 @@ resource "vault_approle_auth_backend_role" "approle_sto_minecraft_a1" {
   role_name      = "sto-minecraft-a1.sto.gentoomaniac.net"
   token_policies = ["puppet-common", "puppet-role-minecraft", "sto-minecraft-a1.sto.gentoomaniac.net"]
 }
+resource "vault_approle_auth_backend_role" "approle_sto_minecraft_b1" {
+  role_name      = "sto-minecraft-b1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "puppet-role-minecraft", "sto-minecraft-b1.sto.gentoomaniac.net"]
+}
+resource "vault_approle_auth_backend_role" "approle_sto_azerothcore_a1" {
+  role_name      = "sto-azerothcore-a1.sto.gentoomaniac.net"
+  token_policies = ["puppet-common", "puppet-role-minecraft", "sto-azerothcore-a1.sto.gentoomaniac.net"]
+}
 resource "vault_approle_auth_backend_role" "approle_bootstrap" {
   role_name      = "bootstrap"
   token_policies = ["puppet-common"]
 }
-resource "vault_approle_auth_backend_role" "approle_sto_miner_a1" {
-  role_name      = "sto-miner-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-miner", "sto-miner-a1.sto.gentoomaniac.net"]
-}
-
 data "vault_policy_document" "puppet_bootstrap" {
   rule {
     path         = "puppet/data/bootstrap/*"
@@ -89,9 +92,9 @@ data "vault_policy_document" "puppet_role_vault" {
     capabilities = ["read"]
   }
 }
-data "vault_policy_document" "puppet_role_miner" {
+data "vault_policy_document" "puppet_role_azerothcore" {
   rule {
-    path         = "puppet/data/role/miner/*"
+    path         = "puppet/data/role/azerothcore/*"
     capabilities = ["read"]
   }
 }
@@ -138,6 +141,12 @@ data "vault_policy_document" "puppet_fqdn_sto_minecraft_a1" {
     capabilities = ["read"]
   }
 }
+data "vault_policy_document" "puppet_fqdn_sto_minecraft_b1" {
+  rule {
+    path         = "puppet/data/fqdn/sto-minecraft-b1.sto.gentoomaniac.net/*"
+    capabilities = ["read"]
+  }
+}
 data "vault_policy_document" "puppet_fqdn_sto_nzbget_a1" {
   rule {
     path         = "puppet/data/fqdn/sto-nzbget-a1.sto.gentoomaniac.net/*"
@@ -150,9 +159,9 @@ data "vault_policy_document" "puppet_fqdn_sto_vault_a1" {
     capabilities = ["read"]
   }
 }
-data "vault_policy_document" "puppet_fqdn_sto_miner_a1" {
+data "vault_policy_document" "puppet_fqdn_sto_azerothcore_a1" {
   rule {
-    path         = "puppet/data/fqdn/sto-miner-a1.sto.gentoomaniac.net/*"
+    path         = "puppet/data/fqdn/sto-azerothcore-a1.sto.gentoomaniac.net/*"
     capabilities = ["read"]
   }
 }
@@ -204,9 +213,9 @@ resource "vault_policy" "puppet_role_vault" {
   name   = "puppet-role-vault"
   policy = data.vault_policy_document.puppet_role_vault.hcl
 }
-resource "vault_policy" "puppet_role_miner" {
-  name   = "puppet-role-miner"
-  policy = data.vault_policy_document.puppet_role_miner.hcl
+resource "vault_policy" "puppet_role_azerothcore" {
+  name   = "puppet-role-azerothcore"
+  policy = data.vault_policy_document.puppet_role_azerothcore.hcl
 }
 
 resource "vault_policy" "puppet_fqdn_sto_coredns_a1" {
@@ -237,6 +246,10 @@ resource "vault_policy" "puppet_fqdn_sto_minecraft_a1" {
   name   = "sto-minecraft-a1.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_minecraft_a1.hcl
 }
+resource "vault_policy" "puppet_fqdn_sto_minecraft_b1" {
+  name   = "sto-minecraft-b1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_minecraft_b1.hcl
+}
 resource "vault_policy" "puppet_fqdn_sto_nzbget_a1" {
   name   = "sto-nzbget-a1.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_nzbget_a1.hcl
@@ -245,7 +258,7 @@ resource "vault_policy" "puppet_fqdn_sto_vault_a1" {
   name   = "sto-vault-a1.sto.gentoomaniac.net"
   policy = data.vault_policy_document.puppet_fqdn_sto_vault_a1.hcl
 }
-resource "vault_policy" "puppet_fqdn_sto_miner_a1" {
-  name   = "sto-miner-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_miner_a1.hcl
+resource "vault_policy" "puppet_fqdn_sto_azerothcore_a1" {
+  name   = "sto-azerothcore-a1.sto.gentoomaniac.net"
+  policy = data.vault_policy_document.puppet_fqdn_sto_azerothcore_a1.hcl
 }
