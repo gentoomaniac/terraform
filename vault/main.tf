@@ -17,26 +17,6 @@ locals {
   # - extra_policies: Any additional policies (e.g., certbot)
   # --------------------------------------------------------
   hosts = {
-    "sto-dockerhost-a1" = {
-      roles          = ["dockerhost"]
-      extra_policies = []
-    }
-    "sto-infra-a1" = {
-      roles          = ["infra"]
-      extra_policies = ["puppet-role-certbot"]
-    }
-    "sto-jammy-a1" = {
-      roles          = []
-      extra_policies = []
-    }
-    "sto-minecraft-a1" = {
-      roles          = ["minecraft"]
-      extra_policies = []
-    }
-    "sto-minecraft-b1" = {
-      roles          = ["minecraft"]
-      extra_policies = []
-    }
     "sto-coredns-a1" = {
       roles          = ["coredns"]
       extra_policies = []
@@ -45,9 +25,17 @@ locals {
       roles          = ["coredns"]
       extra_policies = []
     }
-    "sto-influxdb-a1" = {
-      roles          = ["influxdb"]
+    "sto-dev-a1" = {
+      roles          = ["dev"]
       extra_policies = []
+    }
+    "sto-dockerhost-a1" = {
+      roles          = ["dockerhost"]
+      extra_policies = []
+    }
+    "sto-infra-a1" = {
+      roles          = ["infra"]
+      extra_policies = ["puppet-role-certbot"]
     }
     "sto-nzbget-a1" = {
       roles          = ["nzbget"]
@@ -62,7 +50,7 @@ locals {
   # Dynamically extract all unique roles from the hosts dictionary
   # plus any standalone roles you want to ensure are created.
   roles = toset([
-    "coredns", "dockerhost", "influxdb", "infra", "minecraft", "nzbget", "vault", "azerothcore"
+    "coredns", "dev", "dockerhost", "infra", "minecraft", "nzbget", "vault"
   ])
 }
 
