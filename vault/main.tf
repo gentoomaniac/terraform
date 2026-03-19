@@ -7,34 +7,74 @@ resource "vault_github_user" "gentoomaniac" {
   policies = ["admin"]
 }
 
-resource "vault_approle_auth_backend_role" "approle_sto_dockerhost_a1" {
-  role_name      = "sto-dockerhost-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-dockerhost", "sto-dockerhost-a1.sto.gentoomaniac.net"]
+locals {
+  domain = "sto.gentoomaniac.net"
+
+  # --------------------------------------------------------
+  # HOST DICTIONARY
+  # Add new hosts here. All hosts will automatically get an AppRole.
+  # - roles: Maps to puppet/data/role/<role>/*
+  # - extra_policies: Any additional policies (e.g., certbot)
+  # --------------------------------------------------------
+  hosts = {
+    "sto-dockerhost-a1" = {
+      roles          = ["dockerhost"]
+      extra_policies = []
+    }
+    "sto-infra-a1" = {
+      roles          = ["infra"]
+      extra_policies = ["puppet-role-certbot"]
+    }
+    "sto-jammy-a1" = {
+      roles          = []
+      extra_policies = []
+    }
+    "sto-minecraft-a1" = {
+      roles          = ["minecraft"]
+      extra_policies = []
+    }
+    "sto-minecraft-b1" = {
+      roles          = ["minecraft"]
+      extra_policies = []
+    }
+    "sto-coredns-a1" = {
+      roles          = ["coredns"]
+      extra_policies = []
+    }
+    "sto-coredns-c1" = {
+      roles          = ["coredns"]
+      extra_policies = []
+    }
+    "sto-influxdb-a1" = {
+      roles          = ["influxdb"]
+      extra_policies = []
+    }
+    "sto-nzbget-a1" = {
+      roles          = ["nzbget"]
+      extra_policies = []
+    }
+    "sto-vault-a1" = {
+      roles          = ["vault"]
+      extra_policies = []
+    }
+  }
+
+  # Dynamically extract all unique roles from the hosts dictionary
+  # plus any standalone roles you want to ensure are created.
+  roles = toset([
+    "coredns", "dockerhost", "influxdb", "infra", "minecraft", "nzbget", "vault", "azerothcore"
+  ])
 }
-resource "vault_approle_auth_backend_role" "approle_sto_infra_a1" {
-  role_name      = "sto-infra-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-infra", "sto-infra-a1.sto.gentoomaniac.net", "puppet-role-certbot"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_jammya_a1" {
-  role_name      = "sto-jammy-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "sto-jammy-a1.sto.gentoomaniac.net"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_minecraft_a1" {
-  role_name      = "sto-minecraft-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-minecraft", "sto-minecraft-a1.sto.gentoomaniac.net"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_minecraft_b1" {
-  role_name      = "sto-minecraft-b1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-minecraft", "sto-minecraft-b1.sto.gentoomaniac.net"]
-}
-resource "vault_approle_auth_backend_role" "approle_sto_azerothcore_a1" {
-  role_name      = "sto-azerothcore-a1.sto.gentoomaniac.net"
-  token_policies = ["puppet-common", "puppet-role-minecraft", "sto-azerothcore-a1.sto.gentoomaniac.net"]
-}
+
+# ==========================================
+# BOOTSTRAP & COMMON RESOURCES
+# ==========================================
+
 resource "vault_approle_auth_backend_role" "approle_bootstrap" {
   role_name      = "bootstrap"
   token_policies = ["puppet-common"]
 }
+
 data "vault_policy_document" "puppet_bootstrap" {
   rule {
     path         = "puppet/data/bootstrap/*"
@@ -42,127 +82,17 @@ data "vault_policy_document" "puppet_bootstrap" {
     description  = "bootstrap area for new machines to pick up approle credentials"
   }
 }
+
+resource "vault_policy" "puppet_bootstrap" {
+  name   = "puppet-bootstrap"
+  policy = data.vault_policy_document.puppet_bootstrap.hcl
+}
+
 data "vault_policy_document" "puppet_common" {
   rule {
     path         = "puppet/data/common/*"
     capabilities = ["read"]
     description  = "common secrets for all machines managed by puppet"
-  }
-}
-
-data "vault_policy_document" "puppet_role_coredns" {
-  rule {
-    path         = "puppet/data/role/coredns/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_dockerhost" {
-  rule {
-    path         = "puppet/data/role/dockerhost/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_influxdb" {
-  rule {
-    path         = "puppet/data/role/influxdb/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_infra" {
-  rule {
-    path         = "puppet/data/role/infra/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_minecraft" {
-  rule {
-    path         = "puppet/data/role/minecraft/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_nzbget" {
-  rule {
-    path         = "puppet/data/role/nzbget/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_vault" {
-  rule {
-    path         = "puppet/data/role/vault/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_role_azerothcore" {
-  rule {
-    path         = "puppet/data/role/azerothcore/*"
-    capabilities = ["read"]
-  }
-}
-
-data "vault_policy_document" "puppet_fqdn_sto_coredns_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-coredns-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_coredns_c1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-coredns-c1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_dockerhost_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-dockerhost-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_influxdb_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-influxdb-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_infra_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-infra-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_jammy_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-jammy-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_minecraft_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-minecraft-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_minecraft_b1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-minecraft-b1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_nzbget_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-nzbget-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_vault_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-vault-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
-  }
-}
-data "vault_policy_document" "puppet_fqdn_sto_azerothcore_a1" {
-  rule {
-    path         = "puppet/data/fqdn/sto-azerothcore-a1.sto.gentoomaniac.net/*"
-    capabilities = ["read"]
   }
 }
 
@@ -178,87 +108,58 @@ path "puppet/data/common/secret_srv_gentoomaniac_net_key" {
 path "puppet/data/role/certbot/*" {
   capabilities = ["read"]
 }
-
 EOT
 }
-resource "vault_policy" "puppet_bootstrap" {
-  name   = "puppet-bootstrap"
-  policy = data.vault_policy_document.puppet_bootstrap.hcl
-}
-resource "vault_policy" "puppet_role_coredns" {
-  name   = "puppet-role-coredns"
-  policy = data.vault_policy_document.puppet_role_coredns.hcl
-}
-resource "vault_policy" "puppet_role_dockerhost" {
-  name   = "puppet-role-dockerhost"
-  policy = data.vault_policy_document.puppet_role_dockerhost.hcl
-}
-resource "vault_policy" "puppet_role_influxdb" {
-  name   = "puppet-role-influxdb"
-  policy = data.vault_policy_document.puppet_role_influxdb.hcl
-}
-resource "vault_policy" "puppet_role_infra" {
-  name   = "puppet-role-infra"
-  policy = data.vault_policy_document.puppet_role_infra.hcl
-}
-resource "vault_policy" "puppet_role_minecraft" {
-  name   = "puppet-role-minecraft"
-  policy = data.vault_policy_document.puppet_role_minecraft.hcl
-}
-resource "vault_policy" "puppet_role_nzbget" {
-  name   = "puppet-role-nzbget"
-  policy = data.vault_policy_document.puppet_role_nzbget.hcl
-}
-resource "vault_policy" "puppet_role_vault" {
-  name   = "puppet-role-vault"
-  policy = data.vault_policy_document.puppet_role_vault.hcl
-}
-resource "vault_policy" "puppet_role_azerothcore" {
-  name   = "puppet-role-azerothcore"
-  policy = data.vault_policy_document.puppet_role_azerothcore.hcl
+
+# ==========================================
+# DYNAMIC ROLE POLICIES
+# ==========================================
+
+data "vault_policy_document" "puppet_roles" {
+  for_each = local.roles
+  rule {
+    path         = "puppet/data/role/${each.key}/*"
+    capabilities = ["read"]
+  }
 }
 
-resource "vault_policy" "puppet_fqdn_sto_coredns_a1" {
-  name   = "sto-coredns-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_coredns_a1.hcl
+resource "vault_policy" "puppet_roles" {
+  for_each = local.roles
+  name     = "puppet-role-${each.key}"
+  policy   = data.vault_policy_document.puppet_roles[each.key].hcl
 }
-resource "vault_policy" "puppet_fqdn_sto_coredns_c1" {
-  name   = "sto-coredns-c1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_coredns_c1.hcl
+
+# ==========================================
+# DYNAMIC FQDN POLICIES
+# ==========================================
+
+data "vault_policy_document" "puppet_fqdns" {
+  for_each = local.hosts
+  rule {
+    path         = "puppet/data/fqdn/${each.key}.${local.domain}/*"
+    capabilities = ["read"]
+  }
 }
-resource "vault_policy" "puppet_fqdn_sto_dockerhost_a1" {
-  name   = "sto-dockerhost-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_dockerhost_a1.hcl
+
+resource "vault_policy" "puppet_fqdns" {
+  for_each = local.hosts
+  name     = "${each.key}.${local.domain}"
+  policy   = data.vault_policy_document.puppet_fqdns[each.key].hcl
 }
-resource "vault_policy" "puppet_fqdn_sto_influxdb_a1" {
-  name   = "sto-influxdb-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_influxdb_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_infra_a1" {
-  name   = "sto-infra-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_infra_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_jammy_a1" {
-  name   = "sto-jammy-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_jammy_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_minecraft_a1" {
-  name   = "sto-minecraft-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_minecraft_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_minecraft_b1" {
-  name   = "sto-minecraft-b1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_minecraft_b1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_nzbget_a1" {
-  name   = "sto-nzbget-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_nzbget_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_vault_a1" {
-  name   = "sto-vault-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_vault_a1.hcl
-}
-resource "vault_policy" "puppet_fqdn_sto_azerothcore_a1" {
-  name   = "sto-azerothcore-a1.sto.gentoomaniac.net"
-  policy = data.vault_policy_document.puppet_fqdn_sto_azerothcore_a1.hcl
+
+# ==========================================
+# DYNAMIC APPROLES
+# ==========================================
+
+resource "vault_approle_auth_backend_role" "approles" {
+  for_each       = local.hosts
+  role_name      = "${each.key}.${local.domain}"
+  
+  # Concatenates puppet-common, any role-specific policies, the FQDN policy, and extra policies
+  token_policies = concat(
+    ["puppet-common"],
+    [for role in each.value.roles : "puppet-role-${role}"],
+    ["${each.key}.${local.domain}"],
+    each.value.extra_policies
+  )
 }
