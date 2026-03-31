@@ -17,10 +17,13 @@ variable "hosts" {
     extra_policies = optional(list(string), [])
     proxmox = optional(object({
       vm_id         = number
-      cores         = number
       memory        = number
       on_boot       = bool
       startup_order = number
+      cpu = optional(object({
+        cores = number
+        type  = optional(string, "qemu64")
+      }))
     }))
   }))
 }

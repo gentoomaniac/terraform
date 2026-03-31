@@ -15,7 +15,8 @@ resource "proxmox_virtual_environment_vm" "vault_smbios" {
 
   # CPU Cores
   cpu {
-    cores = each.value.proxmox.cores
+    cores = each.value.proxmox.cpu.cores
+    type  = each.value.proxmox.cpu.type
   }
 
   # Memory (in Megabytes)
