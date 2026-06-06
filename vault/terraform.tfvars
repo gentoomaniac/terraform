@@ -2,10 +2,10 @@ hosts = {
   "sto-dockerhost-a1" = {}
   "sto-dev-a1" = {
     proxmox = {
-      vm_id          = 102
-      memory         = 8192
-      on_boot        = true
-      startup_order  = 99
+      vm_id         = 102
+      memory        = 8192
+      on_boot       = true
+      startup_order = 99
       cpu = {
         cores = 4
       }
@@ -27,8 +27,8 @@ hosts = {
       }
     }
   }
-  "sto-coredns-a1"   = {}
-  "sto-coredns-c1"   = {
+  "sto-coredns-a1" = {}
+  "sto-coredns-c1" = {
     proxmox = {
       vm_id         = 109
       memory        = 4096
@@ -40,6 +40,7 @@ hosts = {
     }
   }
   "sto-grafana-a1"  = {}
-  "sto-nzbget-a1"    = {}
-  "sto-vault-a1"     = {}
+  "sto-nzbget-a1"   = {}
+  "sto-windrose-a1" = {}
+  "sto-vault-a1"    = {}
 }
