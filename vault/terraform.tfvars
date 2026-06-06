@@ -14,11 +14,11 @@ hosts = {
   "sto-infra-a1" = {
     extra_policies = ["puppet-role-certbot"]
   }
-  "sto-infra-b1"   = {
+  "sto-infra-b1" = {
     extra_policies = ["puppet-role-certbot"]
     proxmox = {
       vm_id         = 112
-      memory        = 4096
+      memory        = 8192
       on_boot       = true
       startup_order = 1
       cpu = {
