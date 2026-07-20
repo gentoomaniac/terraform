@@ -39,8 +39,19 @@ hosts = {
       }
     }
   }
-  "sto-grafana-a1"  = {}
-  "sto-nzbget-a1"   = {}
-  "sto-windrose-a1" = {}
-  "sto-vault-a1"    = {}
+  "sto-grafana-a1" = {}
+  "sto-nzbget-a1"  = {}
+  "sto-palworld-a1" = {
+    proxmox = {
+      vm_id         = 100
+      memory        = 16384
+      on_boot       = true
+      startup_order = 999
+      cpu = {
+        cores = 2
+        type  = "host"
+      }
+    }
+  }
+  "sto-vault-a1" = {}
 }

@@ -1,4 +1,8 @@
 import {
+  to = proxmox_virtual_environment_vm.vault_smbios["sto-palworld-a1"]
+  id = "sto-proxmox-a1/100"
+}
+import {
   to = proxmox_virtual_environment_vm.vault_smbios["sto-dev-a1"]
   id = "sto-proxmox-a1/102"
 }
