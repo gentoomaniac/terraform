@@ -24,6 +24,11 @@ variable "hosts" {
         cores = number
         type  = optional(string, "qemu64")
       }))
+      agent = optional(object({
+        enabled = bool
+        timeout = optional(string, "15m")
+        trim    = optional(bool, true)
+      }))
     }))
   }))
 }

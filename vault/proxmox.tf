@@ -24,6 +24,13 @@ resource "proxmox_virtual_environment_vm" "vault_smbios" {
     dedicated = each.value.proxmox.memory
   }
 
+  agent {
+    enabled = try(each.value.proxmox.agent.enabled, false)
+    timeout = try(each.value.proxmox.agent.timeout, "15m")
+    trim    = try(each.value.proxmox.agent.trim, true)
+    type    = "virtio"
+  }
+
   # Inject the AppRole credentials
   smbios {
     serial  = vault_approle_auth_backend_role.approles[each.key].role_id

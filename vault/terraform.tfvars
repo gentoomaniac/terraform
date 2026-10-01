@@ -44,14 +44,29 @@ hosts = {
   "sto-palworld-a1" = {
     proxmox = {
       vm_id         = 100
-      memory        = 16384
+      memory        = 32768
       on_boot       = true
       startup_order = 999
+      cpu = {
+        cores = 4
+        type  = "host"
+      }
+      agent = {
+        enabled = true
+      }
+    }
+  }
+  "sto-vault-a1" = {}
+  "sto-homeassistant-a1" = {
+    proxmox = {
+      vm_id         = 120
+      memory        = 8192
+      on_boot       = true
+      startup_order = 1
       cpu = {
         cores = 2
         type  = "host"
       }
     }
   }
-  "sto-vault-a1" = {}
 }
