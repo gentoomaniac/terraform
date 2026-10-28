@@ -35,6 +35,12 @@ data "vault_policy_document" "puppet_common" {
 resource "vault_policy" "puppet_role_certbot" {
   name   = "puppet-role-certbot"
   policy = <<EOT
+path "puppet/data/common/secret_gentoomaniac_net_cert" {
+  capabilities = ["read", "update"]
+}
+path "puppet/data/common/secret_gentoomaniac_net_key" {
+  capabilities = ["read", "update"]
+}
 path "puppet/data/common/secret_srv_gentoomaniac_net_cert" {
   capabilities = ["read", "update"]
 }
